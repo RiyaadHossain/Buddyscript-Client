@@ -1,13 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 // app/login/page.tsx
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import z from 'zod';
-
 import { Button } from './ui/button';
 
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import LoadingButton from './shared/LoadingButton';
 import { Checkbox } from './ui/checkbox';
 import {
   Form,
@@ -20,6 +25,10 @@ import {
 import { Input } from './ui/input';
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const formSchema = z.object({
     email: z
       .string()
@@ -28,7 +37,6 @@ export default function LoginPage() {
     password: z
       .string()
       .min(6, { message: 'Password must be at least 6 characters long.' }),
-    rememberMe: z.boolean().optional(),
   });
 
   type FormSchemaType = z.infer<typeof formSchema>;
@@ -38,38 +46,31 @@ export default function LoginPage() {
     defaultValues: {
       email: '',
       password: '',
-      rememberMe: false,
     },
   });
 
-  // Credentials login
   const onSubmit = async (values: FormSchemaType) => {
-    console.log('value: ', values);
-    // setIsSubmitting(true);
-    // try {
-    //   const result = await signIn('credentials', {
-    //     redirect: false,
-    //     email: values.email,
-    //     password: values.password,
-    //   });
-    //   if (result?.error) {
-    //     toast.error('Invalid email or password');
-    //     return;
-    //   }
-    //   toast.success('Login successful!');
-    //   router.push('/');
-    // } catch (err: any) {
-    //   toast.error(err?.message || 'Something went wrong');
-    // } finally {
-    //   // setIsSubmitting(false);
-    // }
-  };
+    setIsSubmitting(true);
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
 
-  // Google sign-in handler
-  // const handleGoogleSignIn = () => {
-  //   console.log('Google sign-in clicked');
-  //   // Implement Google OAuth logic here
-  // };
+      if (result?.error) {
+        toast.error('Invalid email or password');
+        return;
+      }
+
+      toast.success('Login successful!');
+      router.push('/feed');
+    } catch (err: any) {
+      toast.error(err?.message || 'Something went wrong');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <section className="relative min-h-screen overflow-hidden bg-(--bg1)">
@@ -82,7 +83,7 @@ export default function LoginPage() {
             alt="shape1"
             width={150}
             height={150}
-            className="block"
+            className=" hidden lg:block"
           />
         </div>
         {/* Top Right */}
@@ -92,7 +93,7 @@ export default function LoginPage() {
             alt="shape2"
             width={440}
             height={540}
-            className="block"
+            className=" hidden lg:block"
           />
         </div>
         {/* Bottom Left */}
@@ -102,17 +103,15 @@ export default function LoginPage() {
             alt="shape3"
             width={600}
             height={440}
-            className="w-130"
+            className="w-130 hidden lg:block"
           />
         </div>
       </div>
 
-      {/* Login main image */}
-
-      {/* Login form container */}
-      <div className="relative min-h-screen flex justify-center items-baseline-last gap-25">
-        {/* <div className="absolute left-35 bottom-[-40] w-1/2 hidden lg:flex items-center justify-center"> */}
-        <div className="mt-50 ">
+      {/* Login form  */}
+      <div className="relative min-h-screen flex flex-col lg:flex-row justify-center items-baseline-last gap-25">
+        <div className="mt-8 lg:mt-50 px-4 lg:px-0 h-[550px]">
+          {/* Login Illustration */}
           <Image
             src="/assets/images/login.png"
             alt="Login Illustration"
@@ -121,7 +120,7 @@ export default function LoginPage() {
             className="object-cover"
           />
         </div>
-        <div className="w-full lg:w-2/7  flex flex-col justify-start items-center bg-(--bg2) shadow-md rounded-sm px-10 py-6 mb-15">
+        <div className="w-full lg:w-2/7  flex flex-col justify-start items-center bg-(--bg2) shadow-md rounded-sm px-10 pt-6 mb-15">
           {/* Logo */}
           <div className="py-8">
             <Image
@@ -133,7 +132,6 @@ export default function LoginPage() {
           </div>
 
           <div className="w-full max-w-md">
-            {/* Welcome text */}
             <div className="text-center mb-8">
               <p className="text-gray-600 text-sm mb-2">Welcome back</p>
               <h4 className="text-2xl font-semibold text-gray-800">
@@ -141,12 +139,10 @@ export default function LoginPage() {
               </h4>
             </div>
 
-            {/* Google Sign-in Button */}
             <Button
               type="button"
               variant="outline"
               className="w-full py-6 mb-6 flex items-center justify-center gap-3 border-gray-100 "
-              // onClick={handleGoogleSignIn}
             >
               <Image
                 src="assets/images/google.svg"
@@ -185,18 +181,13 @@ export default function LoginPage() {
                       <FormControl>
                         <Input
                           {...field}
-                          className="rounded-md border border-gray-100 bg-white py-6 px-5
-             focus-visible:outline-none 
-             focus-visible:border-blue-100 
-             focus-visible:ring-1 focus-visible:ring-blue-500/40 
-             transition-all duration-200"
+                          className="rounded-md border border-gray-100 bg-white py-6 px-5 focus-visible:outline-none focus-visible:border-blue-100 focus-visible:ring-1 focus-visible:ring-blue-500/40 transition-all duration-200"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 {/* Password */}
                 <FormField
                   control={form.control}
@@ -209,34 +200,25 @@ export default function LoginPage() {
                           {...field}
                           type="password"
                           className="rounded-md border border-gray-100 bg-white py-6 px-5 focus-visible:outline-none focus-visible:border-blue-100 focus-visible:ring-1 focus-visible:ring-blue-500/40"
-                          // disabled={isSubmitting}
+                          disabled={isSubmitting}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 {/* Remember me & Forgot password */}
                 <div className="flex items-center justify-between">
-                  <FormField
-                    control={form.control}
-                    name="rememberMe"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm text-gray-600 cursor-pointer mt-0!">
-                          Remember me
-                        </FormLabel>
-                      </FormItem>
-                    )}
+                  <Checkbox
+                    id="remember"
+                    className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                   />
+                  <label
+                    htmlFor="remember"
+                    className="text-sm text-gray-600 cursor-pointer"
+                  >
+                    Remember me
+                  </label>
                   <Link
                     href="/forgot-password"
                     className="text-sm text-blue-500 hover:text-blue-600"
@@ -244,24 +226,24 @@ export default function LoginPage() {
                     Forgot password?
                   </Link>
                 </div>
-
-                {/* Login Button */}
-                <Button
+                *
+                <LoadingButton
                   type="submit"
+                  isLoading={isSubmitting}
+                  loadingText="Logging in..."
                   className="w-full py-6 bg-blue-500 hover:bg-blue-600 text-white font-medium"
-                  // disabled={isSubmitting}
                 >
                   Login now
-                </Button>
+                </LoadingButton>
               </form>
             </Form>
 
             {/* Create Account Link */}
-            <div className="text-center mt-6">
+            <div className="text-center my-6">
               <p className="text-gray-600 text-sm">
                 Dont have an account?{' '}
                 <Link
-                  href="/signup"
+                  href="/register"
                   className="text-blue-500 hover:text-blue-600 font-medium"
                 >
                   Create New Account

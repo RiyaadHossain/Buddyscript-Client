@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
@@ -25,15 +24,20 @@ export const authOptions: NextAuthOptions = {
             }
           );
 
-          const data = await res.json();
+          const result = await res.json();
 
-          if (!res.ok || !data) return null;
+          console.log('resul: ', result);
+
+          if (!res.ok || !result?.data) return null;
+
+          const user = result.data.user;
 
           return {
-            id: data.data.user._id,
-            email: data.data.user.email,
-            role: data.data.user.role,
-            accessToken: data.data.token,
+            id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            accessToken: result.data.token,
             provider: 'credentials',
           };
         } catch (error) {
@@ -46,11 +50,12 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user }) {
-      if (user && user.provider === 'credentials') {
+      if (user?.provider === 'credentials') {
         token.id = user.id;
+        token.firstName = user?.firstName;
+        token.lastName = user?.lastName;
         token.email = user.email;
-        token.role = user.role;
-        token.accessToken = user.accessToken;
+        token.accessToken = user?.accessToken;
         token.provider = 'credentials';
       }
       return token;
@@ -58,15 +63,16 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       if (token.provider !== 'credentials') {
-        throw new Error('Invalid session provider');
+        throw new Error('Invalid provider');
       }
 
       session.user = {
         id: token.id as string,
-        provider: 'credentials',
+        firstName: token.firstName as string,
+        lastName: token.lastName as string,
         email: token.email as string,
-        role: token.role as string,
         accessToken: token.accessToken as string,
+        provider: 'credentials',
       };
 
       return session;
@@ -79,5 +85,5 @@ export const authOptions: NextAuthOptions = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-  pages: { signIn: '/login' },
+  pages: { signIn: '/' },
 };
