@@ -66,10 +66,10 @@ export default function LoginPage() {
   };
 
   // Google sign-in handler
-  const handleGoogleSignIn = () => {
-    console.log('Google sign-in clicked');
-    // Implement Google OAuth logic here
-  };
+  // const handleGoogleSignIn = () => {
+  //   console.log('Google sign-in clicked');
+  //   // Implement Google OAuth logic here
+  // };
 
   return (
     <section className="relative min-h-screen overflow-hidden bg-(--bg1)">
@@ -121,7 +121,7 @@ export default function LoginPage() {
             className="object-cover"
           />
         </div>
-        <div className="w-full lg:w-2/7  flex flex-col justify-start items-center bg-(--bg2) shadow-md rounded-sm px-10 pt-6 mb-15">
+        <div className="w-full lg:w-2/7  flex flex-col justify-start items-center bg-(--bg2) shadow-md rounded-sm px-10 py-6 mb-15">
           {/* Logo */}
           <div className="py-8">
             <Image
@@ -231,7 +231,7 @@ export default function LoginPage() {
                             className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                           />
                         </FormControl>
-                        <FormLabel className="text-sm text-gray-600 cursor-pointer !mt-0">
+                        <FormLabel className="text-sm text-gray-600 cursor-pointer mt-0!">
                           Remember me
                         </FormLabel>
                       </FormItem>
