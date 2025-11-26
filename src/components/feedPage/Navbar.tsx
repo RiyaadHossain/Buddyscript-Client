@@ -10,13 +10,22 @@ import {
   ChevronDown,
 } from "lucide-react";
 import Image from "next/image";
+import { signOut,useSession } from "next-auth/react";
+import { useAppDispatch, useAppSelector } from "@/redux/hook/hook";
+import { clearUserProfile } from "@/redux/features/user/userSlice";
 
 const Navbar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const dispatch = useAppDispatch();
+
   const notificationCount = 2;
   const cartCount = 2;
+
+  const { data: session } = useSession();
+  const { profile: user } = useAppSelector((state) => state.user);
+  
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
@@ -148,9 +157,18 @@ const Navbar = () => {
                     Help Center
                   </a>
                   <div className="border-t border-gray-100 my-2"></div>
+
+                  
+
                   <a
                     href="#"
                     className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
+                      onClick={() => {
+                      signOut({ callbackUrl: '/' });
+                     
+                      dispatch(clearUserProfile());
+                    }}
+                    
                   >
                     Logout
                   </a>

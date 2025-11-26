@@ -16,7 +16,7 @@ export default function UserSyncProvider({
     const fetchProfile = async () => {
       if (status === 'authenticated' && session?.user?.accessToken) {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/auth/profile`,
+          `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/auth/me`,
           {
             headers: {
               Authorization: `${session.user.accessToken}`,

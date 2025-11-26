@@ -1,39 +1,44 @@
-import { api } from '../../api/apiSlice';
-import { PostsApiResponse, Post } from './PostTypes';
-
-interface CreatePostPayload {
-  text: string;
-  imageUrl?: string;
-  privacy?: 'public' | 'private' | 'friends';
-}
+import { IPost } from "@/interfaces/post";
+import { api } from "../../api/apiSlice";
+import { PostsApiResponse } from "./postTypes";
 
 interface CreatePostResponse {
   success: boolean;
   message: string;
-  data: Post;
+  data: IPost;
 }
 
 const postsApi = api.injectEndpoints({
   endpoints: (build) => ({
     // GET all posts (paginated)
     getPosts: build.query<PostsApiResponse, { page?: number; limit?: number }>({
-      query: ({ page = 1, limit = 10 }) => `/posts?page=${page}&limit=${limit}`,
-      providesTags: ['Post'],
+      query: ({ page = 1, limit = 10 }) =>
+        `/post/feed?page=${page}&limit=${limit}`,
+      providesTags: ["Post"],
     }),
 
     // POST a new post
-    createPost: build.mutation<CreatePostResponse, CreatePostPayload>({
+    createPost: build.mutation<CreatePostResponse, any>({
       query: (post) => ({
-        url: '/posts',
-        method: 'POST',
-        body: post,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        url: "/post",
+        method: "POST",
+        body: post, // token will be auto-added by prepareHeaders
       }),
-      invalidatesTags: ['Post'], // automatically refetch list
+      invalidatesTags: ["Post"],
+    }),
+
+    // GET reacted
+    reacted: build.query({
+      query: ({ id }) => `/post/reacted/${id}/post`,
+      providesTags: ["Post"],
+    }),
+
+    getLikes: build.query({
+      query: ({ id }) => `/post/${id}/likes`,
+      providesTags: ["Post"],
     }),
   }),
 });
 
-export const { useGetPostsQuery, useCreatePostMutation } = postsApi;
+export const { useGetPostsQuery, useCreatePostMutation, useReactedQuery, useGetLikesQuery } =
+  postsApi;

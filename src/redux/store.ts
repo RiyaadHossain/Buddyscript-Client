@@ -3,6 +3,7 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { api } from './api/apiSlice'; // keep RTK Query if you use it
 
+import authReducer from './api/authSlice';
 import userReducer from './features/user/userSlice';
 
 // Persist configuration
@@ -15,6 +16,7 @@ const persistConfig = {
 // Combine reducers
 const rootReducer = combineReducers({
   user: userReducer,
+  auth: authReducer,
 
   // error: errorReducer,
   [api.reducerPath]: api.reducer, // include RTK Query if used

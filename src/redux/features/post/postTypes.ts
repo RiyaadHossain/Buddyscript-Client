@@ -1,3 +1,5 @@
+import { IPost } from "@/interfaces/post";
+
 export interface Author {
   _id: string;
   firstName: string;
@@ -19,21 +21,6 @@ export interface FirstComment {
   __v: number;
 }
 
-export interface Post {
-  _id: string;
-  author: Author;
-  text: string;
-  imageUrl?: string;
-  privacy: 'public' | 'private' | 'friends';
-  likesCount: number;
-  commentsCount: number;
-  reactions: Record<string, number>; // love, angry, etc.
-  firstComment?: FirstComment;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
 export interface PostsApiResponse {
   success: boolean;
   message: string;
@@ -42,5 +29,5 @@ export interface PostsApiResponse {
     limit: number;
     total: number;
   };
-  data: Post[];
+  data: IPost[];
 }

@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
+"use client";
 // app/login/page.tsx
-import { zodResolver } from '@hookform/resolvers/zod';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import z from 'zod';
-import { Button } from './ui/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
+import { Button } from "./ui/button";
 
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import LoadingButton from './shared/LoadingButton';
-import { Checkbox } from './ui/checkbox';
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import LoadingButton from "./shared/LoadingButton";
+import { Checkbox } from "./ui/checkbox";
 import {
   Form,
   FormControl,
@@ -21,8 +21,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/form';
-import { Input } from './ui/input';
+} from "./ui/form";
+import { Input } from "./ui/input";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,11 +32,11 @@ export default function LoginPage() {
   const formSchema = z.object({
     email: z
       .string()
-      .min(1, { message: 'Email is required.' })
-      .email({ message: 'Please enter a valid email address.' }),
+      .min(1, { message: "Email is required." })
+      .email({ message: "Please enter a valid email address." }),
     password: z
       .string()
-      .min(6, { message: 'Password must be at least 6 characters long.' }),
+      .min(6, { message: "Password must be at least 6 characters long." }),
   });
 
   type FormSchemaType = z.infer<typeof formSchema>;
@@ -44,29 +44,29 @@ export default function LoginPage() {
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
   const onSubmit = async (values: FormSchemaType) => {
     setIsSubmitting(true);
     try {
-      const result = await signIn('credentials', {
+      const result = await signIn("credentials", {
         redirect: false,
         email: values.email,
         password: values.password,
       });
 
       if (result?.error) {
-        toast.error('Invalid email or password');
+        toast.error("Invalid email or password");
         return;
       }
 
-      toast.success('Login successful!');
-      router.push('/feed');
+      toast.success("Login successful!");
+      router.push("/feed");
     } catch (err: any) {
-      toast.error(err?.message || 'Something went wrong');
+      toast.error(err?.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
@@ -169,7 +169,7 @@ export default function LoginPage() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-10 px-2"
+                className="space-y-5 px-2"
               >
                 {/* Email */}
                 <FormField
@@ -209,16 +209,18 @@ export default function LoginPage() {
                 />
                 {/* Remember me & Forgot password */}
                 <div className="flex items-center justify-between">
-                  <Checkbox
-                    id="remember"
-                    className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
-                  />
-                  <label
-                    htmlFor="remember"
-                    className="text-sm text-gray-600 cursor-pointer"
-                  >
-                    Remember me
-                  </label>
+                  <div>
+                    <Checkbox
+                      id="remember"
+                      className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                    />
+                    <label
+                      htmlFor="remember"
+                      className="text-sm text-gray-600 cursor-pointer ml-2"
+                    >
+                      Remember me *
+                    </label>
+                  </div>
                   <Link
                     href="/forgot-password"
                     className="text-sm text-blue-500 hover:text-blue-600"
@@ -226,7 +228,7 @@ export default function LoginPage() {
                     Forgot password?
                   </Link>
                 </div>
-                *
+
                 <LoadingButton
                   type="submit"
                   isLoading={isSubmitting}
@@ -241,7 +243,7 @@ export default function LoginPage() {
             {/* Create Account Link */}
             <div className="text-center my-6">
               <p className="text-gray-600 text-sm">
-                Dont have an account?{' '}
+                Dont have an account?{" "}
                 <Link
                   href="/register"
                   className="text-blue-500 hover:text-blue-600 font-medium"

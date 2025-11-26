@@ -192,7 +192,7 @@ export default function RegisterPage() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-10 px-2"
+                className="space-y-5 px-2"
               >
                 {/* First name */}
                 <FormField
