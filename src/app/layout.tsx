@@ -16,8 +16,11 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'BuddyScript',
+  title: 'Buddy Script',
   description: 'Pixel-perfect conversion',
+  icons: {
+    icon: '/logo-copy.svg'
+  }
 };
 
 export default async function RootLayout({
