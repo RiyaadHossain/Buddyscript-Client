@@ -5,6 +5,9 @@ This repository contains the full client-side implementation, including authenti
 
 The frontend is cleanly structured, fully typed, and optimized for scalability and production deployment.
 
+![Dashboard Screenshot](./public/assets/screenshots/image.png)
+
+
 ---
 
 ## 📖 Table of Contents
