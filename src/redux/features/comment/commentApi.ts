@@ -29,6 +29,11 @@ export interface CreateCommentResponse {
 
 export const commentApi = api.injectEndpoints({
   endpoints: (build) => ({
+    getCommentsByPostId: build.query({
+      query: (postId) => `post/${postId}/comments`,
+      providesTags: ["Post"],
+    }),
+
     createComment: build.mutation<CreateCommentResponse, CreateCommentPayload>({
       query: (comment) => ({
         url: "/comment", // adjust endpoint if needed
@@ -57,6 +62,7 @@ export const commentApi = api.injectEndpoints({
 });
 
 export const {
+  useGetCommentsByPostIdQuery,
   useCreateCommentMutation,
   useDeleteCommentMutation,
   useGetCommentReactQuery,

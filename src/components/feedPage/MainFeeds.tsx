@@ -42,7 +42,7 @@ const Feed = () => {
       <CreatePostCard/>
 
       {/* Post Card */}
-      {data?.data.map((post) => <PostCard post={post} key={post._id} />)}
+      {data?.data?.map((post) => <PostCard post={post} key={post?._id} />)}
     </div>
   );
 };

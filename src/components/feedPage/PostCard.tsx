@@ -13,17 +13,17 @@ export default function PostCard({ post }: { post: IPost }) {
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-orange-500 rounded-full flex items-center justify-center shrink-0">
               <span className="text-white font-semibold text-sm">
-                {post?.author.firstName.slice(0, 1).toUpperCase()}
+                {post?.author?.firstName?.slice(0, 1)?.toUpperCase()}
               </span>
             </div>
             <div>
               <h3 className="text-base font-semibold text-gray-900">
-                {`${post.author.firstName} ${post.author.lastName}`}
+                {`${post?.author?.firstName} ${post?.author?.lastName}`}
               </h3>
               <div className="flex items-center space-x-2 text-xs text-gray-500">
-                <span>{timeAgo(post.createdAt)}</span>
+                <span>{timeAgo(post?.createdAt)}</span>
                 <span>•</span>
-                <span>{post.privacy}</span>
+                <span>{post?.privacy}</span>
               </div>
             </div>
           </div>
@@ -33,7 +33,7 @@ export default function PostCard({ post }: { post: IPost }) {
         </div>
 
         {/* Post Content */}
-        <p className="text-gray-800 mb-3">{post.text}</p>
+        <p className="text-gray-800 mb-3">{post?.text}</p>
       </div>
 
       {/* Post Image */}

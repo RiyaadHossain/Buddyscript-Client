@@ -10,7 +10,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import Image from "next/image";
-import { signOut,useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/redux/hook/hook";
 import { clearUserProfile } from "@/redux/features/user/userSlice";
 
@@ -25,7 +25,6 @@ const Navbar = () => {
 
   const { data: session } = useSession();
   const { profile: user } = useAppSelector((state) => state.user);
-  
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
@@ -97,16 +96,13 @@ const Navbar = () => {
                 className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
               >
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center border border-blue-500">
-                    <Image
-                      src="/assets/images/Avatar.png"
-                      alt=""
-                      width={30}
-                      height={30}
-                    />
+                  <div className="w-8 h-8 bg-linear-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shrink-0">
+                    <span className="text-white font-semibold text-xs">
+                      {user?.firstName?.slice(0, 1)?.toUpperCase()}
+                    </span>
                   </div>
                   <span className="text-gray-700 font-medium text-sm">
-                    Dylan Field
+                    {`${user?.firstName} ${user?.lastName}`}
                   </span>
                   <ChevronDown
                     className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${
@@ -124,13 +120,16 @@ const Navbar = () => {
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-xs font-semibold">
-                          DF
+                      <div className="w-8 h-8 bg-linear-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shrink-0">
+                        <span className="text-white font-semibold text-xs">
+                          {user?.firstName?.slice(0, 1)?.toUpperCase()}
                         </span>
                       </div>
                       <div>
-                        <div className="font-medium">Dylan Field</div>
+                        <div className="font-medium">
+                          {" "}
+                          {`${user?.firstName} ${user?.lastName}`}
+                        </div>
                         <div className="text-xs text-gray-500">
                           View Profile
                         </div>
@@ -158,17 +157,14 @@ const Navbar = () => {
                   </a>
                   <div className="border-t border-gray-100 my-2"></div>
 
-                  
-
                   <a
                     href="#"
                     className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
-                      onClick={() => {
-                      signOut({ callbackUrl: '/' });
-                     
+                    onClick={() => {
+                      signOut({ callbackUrl: "/" });
+
                       dispatch(clearUserProfile());
                     }}
-                    
                   >
                     Logout
                   </a>

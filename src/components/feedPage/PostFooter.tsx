@@ -17,6 +17,7 @@ import {
 import { reactions } from "@/constants/reaction";
 import { ENUM_REACTION_TYPE } from "@/enums/reaction";
 import { useAppSelector } from "@/redux/hook/hook";
+import AllComments from "./AllComment";
 
 export interface Reaction {
   emoji: string;
@@ -27,6 +28,7 @@ export interface Reaction {
 
 export default function PostFooter({ post }: { post: IPost }) {
   const [showReactions, setShowReactions] = useState(false);
+  const [showAllComments, setShowAllComments] = useState(false);
   const { data: reactData, isLoading } = useReactedQuery({ id: post._id });
   const { data: likesData, isLoading: likesIsLoading } = useGetLikesQuery({
     id: post._id,
@@ -34,7 +36,7 @@ export default function PostFooter({ post }: { post: IPost }) {
 
   const [like] = useLikePostMutation();
   const [unlike] = useUnlikePostMutation();
-  
+
   const { profile: user } = useAppSelector((state) => state.user);
 
   if (isLoading || likesIsLoading) return;
@@ -57,7 +59,7 @@ export default function PostFooter({ post }: { post: IPost }) {
         targetId: post._id,
         targetType: "post", // make sure this matches backend
         reaction: react.value,
-        likedBy: user?._id
+        likedBy: user?._id,
       }).unwrap(); // unwrap to get success/error
 
       toast.success(`You reacted ${react.emoji}`);
@@ -67,7 +69,7 @@ export default function PostFooter({ post }: { post: IPost }) {
     }
   };
 
-  const reactionAvatars = likesData.data;
+  const reactionAvatars = likesData?.data;
 
   const reactionInfo = getReactionInfo(alreadyReacted?.reaction);
 
@@ -101,10 +103,10 @@ export default function PostFooter({ post }: { post: IPost }) {
           </div>
           <div className="flex items-center space-x-4 text-sm text-gray-500">
             <span className="hover:text-gray-700 cursor-pointer ">
-              {post.likesCount} Likes
+              {post?.likesCount} Likes
             </span>
             <span className="hover:text-gray-700 cursor-pointer">
-              {post.commentsCount} Comment
+              {post?.commentsCount} Comment
             </span>
           </div>
         </div>
@@ -151,7 +153,7 @@ export default function PostFooter({ post }: { post: IPost }) {
                 onMouseEnter={() => setShowReactions(true)}
                 onMouseLeave={() => setShowReactions(false)}
               >
-                {reactions.map((reaction, index) => (
+                {reactions?.map((reaction, index) => (
                   <button
                     onClick={() => onClickReact(reaction)}
                     key={index}
@@ -165,7 +167,10 @@ export default function PostFooter({ post }: { post: IPost }) {
             )}
           </div>
 
-          <button className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+          <button
+            className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+            onClick={() => setShowAllComments(true)}
+          >
             <MessageCircle className="w-5 h-5" />
             <span className="text-sm font-medium">Comment</span>
           </button>
@@ -176,12 +181,19 @@ export default function PostFooter({ post }: { post: IPost }) {
         </div>
 
         {/* Comment Input */}
-        <CommentInput />
+        <CommentInput postId={post?._id} />
 
         {/* Comments Section */}
-        {post?.firstComment && (
-          <CommentSection firstComment={post.firstComment} />
+        {(post?.firstComment && !showAllComments) && (
+          <CommentSection
+             postId={post?._id}
+            comment={post?.firstComment}
+            setShowAllComments={setShowAllComments}
+            showAllComments={showAllComments}
+          />
         )}
+
+        {showAllComments && <AllComments postId={post?._id} />}
       </div>
     </>
   );
